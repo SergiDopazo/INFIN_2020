@@ -173,13 +173,12 @@ void marcha(){
             return;
         }
     }
-	//Missatge correcte i desenvolupar codi
-    if (msg[2]=='0'){
-		missatge="{M0}";
-	}
-    if (msg[2]=='1'){
+	else{
 		missatge="{M1}";
 	}
+	//Missatge correcte i desenvolupar codi
+    missatge="{M0}";
+    
 	
 
 
