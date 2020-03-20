@@ -45,7 +45,7 @@
 *
 */
 
-//Inicialització funcions
+//InicialitzaciÃ³ funcions
 static void selector(char msg[256]);
 static void marcha(char msg[256]);
 static void oldest(char msg[256]);
@@ -58,9 +58,9 @@ static void errorIns(char msg[256]);
 //Variables lectura
 	int estate=0; //marxa o parada
 	int time=0; //temps entre mostres
-	int samples=0; //número de mostres
+	int samples=0; //nÃºmero de mostres
 
-//Creació array de mostres
+//CreaciÃ³ array de mostres
 	float array[100];
 	float maxValue;
 	float minValue;
@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
 	char		buffer[256];
 	char		missatge[256];
 
-	/*Preparar l'adreça local*/
+	/*Preparar l'adreÃ§a local*/
 	sockAddrSize=sizeof(struct sockaddr_in);
 	bzero ((char *)&serverAddr, sockAddrSize); //Posar l'estructura a zero
 	serverAddr.sin_family = AF_INET;
@@ -91,16 +91,16 @@ int main(int argc, char *argv[])
 	/*Nominalitzar el socket*/
 	result = bind(sFd, (struct sockaddr *) &serverAddr, sockAddrSize);
 	
-	/*Crear una cua per les peticions de connexió*/
+	/*Crear una cua per les peticions de connexiÃ³*/
 	result = listen(sFd, SERVER_MAX_CONNECTIONS);
 	
-	/*Bucle s'acceptació de connexions*/
+	/*Bucle s'acceptaciÃ³ de connexions*/
 	while(1){
 		printf("\nServidor esperant connexions\n");
 
-		/*Esperar conexió. sFd: socket pare, newFd: socket fill*/
+		/*Esperar conexiÃ³. sFd: socket pare, newFd: socket fill*/
 		newFd=accept(sFd, (struct sockaddr *) &clientAddr, &sockAddrSize);
-		printf("Connexión acceptada del client: adreça %s, port %d\n",	inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port));
+		printf("ConnexiÃ³n acceptada del client: adreÃ§a %s, port %d\n",	inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port));
 
 		/*Rebre*/
 		memset( buffer, 0, 256 );
@@ -141,7 +141,7 @@ void selector(){
 			contador(msg);
 			break;
 		default:
-			missatge="{E2}"; //Error de paràmetre
+			missatge="{E2}"; //Error de parÃ metre
 	}
 }
 
@@ -150,15 +150,15 @@ void marcha(){
 	int msgOK=0;
 	int desens=0;
 	int units=0;
-	//Comprovació errors
+	//ComprovaciÃ³ errors
 	if (msg[0]=='{'&&msg[6]=='}'&&msg[7]==0){	 
 		if (msg[2]!='0'&&msg[2]!='1'){
-			missatge="{M2}"; //Error de paràmetres
+			missatge="{M2}"; //Error de parÃ metres
         }
 		else if (msg[2]!='1'&&msg[2]!='0'){
           	missatge="{M2}"; 
         }
-		else if (msg[3]>'9'||msg[3]<'0'){
+		else if (msg[3]>'2'||msg[3]<'0'){
       		missatge="{M2}"; 
         }
 		else if (msg[4]>'9'||msg[4]<'0'){
@@ -176,7 +176,7 @@ void marcha(){
 		missatge="{M1}";
 	}
 	
-    if (msgOK=1){ //Assignació valors per a la lectura
+    if (msgOK=1){ //AssignaciÃ³ valors per a la lectura
     	estate=msg[2]-'0';
     	desens=(msg[3]-'0')*10;
     	units=msg[4]-'0';
@@ -187,6 +187,7 @@ void marcha(){
 
 void oldest(){
 	oldValue = array[counter+1];
+	array[counter+1] = 0;
 	char value[5];
 	if (msg=="{U}"){
 		gcvt(oldValue,5,value);
