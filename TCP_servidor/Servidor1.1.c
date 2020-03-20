@@ -160,19 +160,19 @@ void marcha(){
 			missatge="{M2}";
             return;
 		}
-        if (msg[2]!='1'&&msg[2]!='0'){ //Ho fem millor així un per un amb !=
+        if (msg[2]!='1'&&msg[2]!='0'){
             missatge="{M2}";
             return;
         }
-        if (msg[3]>'9'||msg[3]<'0'){ //O millor així amb un rang de valors?
+        if (msg[3]>'9'||msg[3]<'0'){
             missatge="{M2}";
             return;
         }
-	if (msg[4]>'9'||msg[4]<'0'){ //O millor així amb un rang de valors?
+	if (msg[4]>'9'||msg[4]<'0'){
             missatge="{M2}";
             return;
         }
-        if (msg[5]>'9'||msg[5]<'1'){ //O millor així amb un rang de valors?
+        if (msg[5]>'9'||msg[5]<'1'){
             missatge="{M2}";
             return;
         }
