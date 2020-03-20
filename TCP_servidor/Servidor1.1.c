@@ -154,17 +154,21 @@ void selector(){
 }
 
 void marcha(){
-    //Comprovació error missatge
+    //Comprovació error de paràmetres
 	if (msg[0]=='{'&&msg[6]=='}'&&msg[7]==0){
 		if (msg[2]!='0'&&msg[2]!='1'){
 			missatge="{M2}";
             return;
 		}
-        if (msg[3]!='2'&&msg[3]!='1'&&msg[3]!='0'){ //Ho fem millor així un per un amb !=
+        if (msg[2]!='1'&&msg[2]!='0'){ //Ho fem millor així un per un amb !=
             missatge="{M2}";
             return;
         }
-        if (msg[4]>'9'||msg[4]<'0'){ //O millor així amb un rang de valors?
+        if (msg[3]>'9'||msg[3]<'0'){ //O millor així amb un rang de valors?
+            missatge="{M2}";
+            return;
+        }
+	if (msg[4]>'9'||msg[4]<'0'){ //O millor així amb un rang de valors?
             missatge="{M2}";
             return;
         }
@@ -173,7 +177,7 @@ void marcha(){
             return;
         }
     }
-	else{
+	else{ //Error de protocol
 		missatge="{M1}";
 	}
 	//Missatge correcte i desenvolupar codi
