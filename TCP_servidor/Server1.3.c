@@ -29,8 +29,8 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
-#include <string.h>
 #include <time.h>
+
 
 
 #define SERVER_PORT_NUM		5001
@@ -48,13 +48,15 @@
 */
 
 //Inicialització funcions
-/*static void selector(msg);
-static void marcha(msg);
-static void oldest(msg);
-static void max(msg);
-static void min(msg);
-static void reset(msg);
-static void contador(msg);*/
+static void selector();
+static void marcha();
+static void oldest();
+static void max();
+static void min();
+static void reset();
+static void contador();
+char* itoa(int num, char* str, int base); 
+void reverse(char str[], int length); 
 
 //Variables lectura
 	int estate=0; //marxa o parada
@@ -68,154 +70,7 @@ static void contador(msg);*/
 	float oldValue;
 	int counter=0; //contador de dades
 	
-	char missatge[256];
-
-	
-void marcha(char msg[256]){
-
-	int msgOK=0;
-	int desens=0;
-	int units=0;
-	//Comprovació errors
-	if (msg[0]=='{'&&msg[6]=='}'&&msg[7]==0){
-		if (msg[2]!='0'&&msg[2]!='1'){
-			strcpy(missatge,"{M2}"); //Error de paràmetres
-        }
-		else if (msg[2]!='1'&&msg[2]!='0'){
-          	strcpy(missatge,"{M2}");
-        }
-		else if (msg[3]>'2'||msg[3]<'0'){
-      		strcpy(missatge,"{M2}");
-        }
-		else if (msg[4]>'9'||msg[4]<'0'){
-        	strcpy(missatge,"{M2}");
-    	}
-		else if (msg[3]='2'&&msg[4]>'0'){
-			strcpy(missatge,"{M2}");
-		}
-		else if (msg[5]>'9'||msg[5]<'1'){
-        	strcpy(missatge,"{M2}");
-		}
-		else{
-			strcpy(missatge,"{M0}");   //Missatge correcte
-			msgOK=1;
-		}
-	}
-	else{ //Error de protocol
-		strcpy(missatge,"{M1}");
-	}
-
-    if (msgOK==1){ //Assignació valors per a la lectura
-    	estate=msg[2]-'0';
-    	desens=(msg[3]-'0')*10;
-    	units=msg[4]-'0';
-    	temps=desens+units;
-    	samples=msg[5]-'0';
-	}
-}
-
-void oldest(char msg[256]){
-	oldValue = array[counter+1];
-	array[counter+1] = 0;
-	char value[5];
-	if (msg=="{U}"){
-		gcvt(oldValue,5,value);
-		strcpy(missatge,"{U0");
-		strcat(missatge,value);
-		strcat(missatge,"}");
-	}
-	else{
-		strcpy(missatge,"{U1}");
-	}
-}
-
-void max(char msg[256]){
-	maxValue = array[0];
-	char value[5];
-  for (int c = 1; c < 100; c++) {
-  	if (array[c] > maxValue) {
-    	maxValue  = array[c];
-    }
-  }
-	if (msg=="{X}"){
-		gcvt(maxValue,5,value);
-		strcpy(missatge,"{X0");
-		strcat(missatge,value);
-		strcat(missatge,"}");
-	}
-	else{
-		strcpy(missatge,"{X1}");
-	}
-
-}
-
-void min(char msg[256]){
-	minValue = array[0];
-	char value[5];
-	for (int c = 1; c < 100; c++) {
-    if (array[c] < minValue) {
-    	minValue  = array[c];
-    }
-  }
-	if (msg=="{Y}"){
-		gcvt(minValue,5,value);
-		strcpy(missatge,"{Y0");
-		strcat(missatge,value);
-		strcat(missatge,"}");
-	}
-	else{
-		strcpy(missatge,"{Y1}");
-	}
-}
-
-void reset(char msg[256]){
-	if (msg=="{R}"){
-    minValue=100000;
-    maxValue=0;
-    strcpy(missatge,"{R0}");
-	}
-	else{
-		strcpy(missatge,"{R1}");
-	}
-
-}
-
-void contador(char msg[256]){
-	char value[4];
-	if (msg=="{B}"){
-    gcvt(counter,4,value);
-		strcpy(missatge,"{B0");
-		strcat(missatge,value);
-		strcat(missatge,"}");
-	}
-	else{
-		strcpy(missatge,"{B1}");
-	}
-}
-void selector(char msg[256]){
-	switch(msg[1]){
-		case 'M':
-			marcha(msg);
-			break;
-		case 'U':
-			oldest(msg);
-			break;
-		case 'X':
-			max(msg);
-			break;
-		case 'Y':
-			min(msg);
-			break;
-		case 'R':
-			reset(msg);
-			break;
-		case 'B':
-			contador(msg);
-			break;
-		default:
-			strcpy(missatge,"{E2}");//Error de paràmetre
-	}
-}
+	char missatge[256]="";
 
 int main(int argc, char *argv[])
 {
@@ -232,10 +87,11 @@ int main(int argc, char *argv[])
 	srand((unsigned)time(NULL));
 	for(counter=0;counter<100;counter++)
 	{
-			array[counter] = ((float)rand()/RAND_MAX)*10000;
-			//printf("(%d) %0.1f\n",counter,array[counter]); //Imprimir mostres
+			array[counter] = ((float)rand()/RAND_MAX)*1000;
+			printf("(%d) %0.1f\n",counter,array[counter]); //Imprimir mostres
 	}
-
+	counter = 0;
+	
 	/*Preparar l'adreça local*/
 	sockAddrSize=sizeof(struct sockaddr_in);
 	bzero ((char *)&serverAddr, sockAddrSize); //Posar l'estructura a zero
@@ -277,3 +133,222 @@ int main(int argc, char *argv[])
 		result = close(newFd);
 	}
 }
+
+void selector(char msg[256]){
+	switch(msg[1]){
+		case 'M':
+			marcha(msg);
+			break;
+		case 'U':
+			oldest(msg);
+			break;
+		case 'X':
+			max(msg);
+			break;
+		case 'Y':
+			min(msg);
+			break;
+		case 'R':
+			reset(msg);
+			break;
+		case 'B':
+			contador(msg);
+			break;
+		default:
+			strcpy(missatge,"{E2}");//Error de paràmetre
+	}
+}
+	
+void marcha(char msg[256]){
+
+	int msgOK=0;
+	int desens=0;
+	int units=0;
+	//Comprovació errors
+	if (msg[0]=='{'&&msg[6]=='}'&&msg[7]==0){
+		if (msg[2]!='0'&&msg[2]!='1'){
+			strcpy(missatge,"{M2}"); //Error de paràmetres
+        }
+		else if (msg[2]!='1'&&msg[2]!='0'){
+          	strcpy(missatge,"{M2}");
+        }
+		else if (msg[3]>'2'||msg[3]<'0'){
+      		strcpy(missatge,"{M2}");
+        }
+		else if (msg[4]>'9'||msg[4]<'0'){
+        	strcpy(missatge,"{M2}");
+    	}
+		else if (msg[3]=='2'&&msg[4]>'0'){
+			strcpy(missatge,"{M2}");
+		}
+		else if (msg[5]>'9'||msg[5]<'1'){
+        	strcpy(missatge,"{M2}");
+		}
+		else{
+			strcpy(missatge,"{M0}");   //Missatge correcte
+			msgOK=1;
+		}
+	}
+	else{ //Error de protocol
+		strcpy(missatge,"{M1}");
+	}
+
+    if (msgOK==1){ //Assignació valors per a la lectura
+    	estate=msg[2]-'0';
+    	desens=(msg[3]-'0')*10;
+    	units=msg[4]-'0';
+    	temps=desens+units;
+    	samples=msg[5]-'0';
+	}
+}
+
+void oldest(char msg[256]){
+	oldValue = array[counter];
+	char value[5]="";
+	char missatge1[4]="{U0";
+		
+	if (msg[0]=='{'&&msg[2]=='}'&&msg[3]==0){
+		strcpy(missatge,missatge1);
+		printf("%s\n",missatge);
+		gcvt(oldValue,4,value);
+		int l=strlen(value);
+		if (l<5){
+			for (int i=5-l; i>0; i--){
+				char temp[]="";
+				strcpy(temp,value);
+				strcpy(value,"0");
+				strcat(value,temp);
+			}
+		}
+		printf("%s\n",value);
+		
+		strcat(missatge,value);
+		printf("%s\n",missatge);
+		strcat(missatge,"}");
+		printf("%s\n",missatge);
+		counter++;
+		if(counter==100){
+		counter=0;
+		}
+	}
+	else{
+		strcpy(missatge,"{U1}");
+	}
+}
+
+void max(char msg[256]){
+	maxValue = array[0];
+	char value[5];
+	char missatge1[]="{X0";
+  for (int c = 1; c < 100; c++) {
+  	if (array[c] > maxValue) {
+    	maxValue  = array[c];
+    }
+  }
+	if (msg[0]=='{'&&msg[2]=='}'&&msg[3]==0){
+		strcpy(missatge,missatge1);
+		printf("%s\n",missatge);
+		gcvt(maxValue,4,value);
+		int l=strlen(value);
+		if (l<5){
+			for (int i=5-l; i>0; i--){
+				char temp[]="";
+				strcpy(temp,value);
+				strcpy(value,"0");
+				strcat(value,temp);
+			}
+		}
+		printf("%s\n",value);
+		strcat(missatge,value);
+		printf("%s\n",missatge);
+		strcat(missatge,"}");
+		printf("%s\n",missatge);
+	}
+	else{
+		strcpy(missatge,"{X1}");
+	}
+
+}
+
+void min(char msg[256]){
+	minValue = array[0];
+	char value[5];
+	char missatge1[]="{Y0";
+	for (int c = 1; c < 100; c++) {
+    if (array[c] < minValue) {
+    	minValue  = array[c];
+    }
+  }
+	if (msg[0]=='{'&&msg[2]=='}'&&msg[3]==0){
+		strcpy(missatge,missatge1);
+		printf("%s\n",missatge);
+		if(minValue<1){
+			gcvt(minValue,3,value);
+		}
+		else{
+			gcvt(minValue,4,value);
+		}
+		int l=strlen(value);
+		if (l<5){
+			for (int i=5-l; i>0; i--){
+				char temp[]="";
+				strcpy(temp,value);
+				strcpy(value,"0");
+				strcat(value,temp);
+			}
+		}
+		printf("%s\n",value);
+		
+		strcat(missatge,value);
+		printf("%s\n",missatge);
+		strcat(missatge,"}");
+		printf("%s\n",missatge);
+	}
+	else{
+		strcpy(missatge,"{Y1}");
+	}
+}
+
+void reset(char msg[256]){
+	if (msg[0]=='{'&&msg[2]=='}'&&msg[3]==0){
+    minValue=100000;
+    maxValue=0;
+    strcpy(missatge,"{R0}");
+	}
+	else{
+		strcpy(missatge,"{R1}");
+	}
+
+}
+
+void contador(char msg[256]){
+	char value[4];
+	int left=99-counter;
+	printf("%d\n",left);
+	char missatge1[]="{B0";
+	if (msg[0]=='{'&&msg[2]=='}'&&msg[3]==0){
+		strcpy(missatge,missatge1);
+		printf("%s\n",missatge);
+		itoa(left,value,10);
+		printf("%s\n",value);
+		int l=strlen(value);
+		if (l<4){
+			for (int i=4-l; i>0; i--){
+				char temp[]="";
+				strcpy(temp,value);
+				strcpy(value,"0");
+				strcat(value,temp);
+			}
+		}
+		printf("%s\n",value);
+		strcat(missatge,value);
+		printf("%s\n",missatge);
+		strcat(missatge,"}");
+		printf("%s\n",missatge);
+
+	}
+	else{
+		strcpy(missatge,"{B1}");
+	}
+}
+
