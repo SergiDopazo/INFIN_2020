@@ -79,30 +79,30 @@ void marcha(char msg[256]){
 	//Comprovació errors
 	if (msg[0]=='{'&&msg[6]=='}'&&msg[7]==0){
 		if (msg[2]!='0'&&msg[2]!='1'){
-			missatge="{M2}"; //Error de paràmetres
+			strcpy(missatge,"{M2}"); //Error de paràmetres
         }
 		else if (msg[2]!='1'&&msg[2]!='0'){
-          	missatge="{M2}";
+          	strcpy(missatge,"{M2}");
         }
 		else if (msg[3]>'2'||msg[3]<'0'){
-      		missatge="{M2}";
+      		strcpy(missatge,"{M2}");
         }
 		else if (msg[4]>'9'||msg[4]<'0'){
-        	missatge="{M2}";
+        	strcpy(missatge,"{M2}");
     	}
 		else if (msg[3]='2'&&msg[4]>'0'){
-					missatge="{M2}";
+			strcpy(missatge,"{M2}");
 		}
 		else if (msg[5]>'9'||msg[5]<'1'){
-        	missatge="{M2}";
+        	strcpy(missatge,"{M2}");
 		}
 		else{
-			missatge="{M0}";    //Missatge correcte
+			strcpy(missatge,"{M0}");   //Missatge correcte
 			msgOK=1;
 		}
 	}
 	else{ //Error de protocol
-		missatge="{M1}";
+		strcpy(missatge,"{M1}");
 	}
 
     if (msgOK==1){ //Assignació valors per a la lectura
@@ -120,12 +120,12 @@ void oldest(char msg[256]){
 	char value[5];
 	if (msg=="{U}"){
 		gcvt(oldValue,5,value);
-		missatge="{U0";
+		strcpy(missatge,"{U0");
 		strcat(missatge,value);
 		strcat(missatge,"}");
 	}
 	else{
-		missatge="{U1}";
+		strcpy(missatge,"{U1}");
 	}
 }
 
@@ -139,12 +139,12 @@ void max(char msg[256]){
   }
 	if (msg=="{X}"){
 		gcvt(maxValue,5,value);
-		missatge="{X0";
+		strcpy(missatge,"{X0");
 		strcat(missatge,value);
 		strcat(missatge,"}");
 	}
 	else{
-		missatge="{X1}";
+		strcpy(missatge,"{X1}");
 	}
 
 }
@@ -159,12 +159,12 @@ void min(char msg[256]){
   }
 	if (msg=="{Y}"){
 		gcvt(minValue,5,value);
-		missatge="{Y0";
+		strcpy(missatge,"{Y0");
 		strcat(missatge,value);
 		strcat(missatge,"}");
 	}
 	else{
-		missatge="{Y1}";
+		strcpy(missatge,"{Y1}");
 	}
 }
 
@@ -172,10 +172,10 @@ void reset(char msg[256]){
 	if (msg=="{R}"){
     minValue=100000;
     maxValue=0;
-    missatge="{R0}";
+    strcpy(missatge,"{R0}");
 	}
 	else{
-		missatge="{R1}";
+		strcpy(missatge,"{R1}");
 	}
 
 }
@@ -184,12 +184,12 @@ void contador(char msg[256]){
 	char value[4];
 	if (msg=="{B}"){
     gcvt(counter,4,value);
-		missatge="{B0";
+		strcpy(missatge,"{B0");
 		strcat(missatge,value);
 		strcat(missatge,"}");
 	}
 	else{
-		missatge="{B1}";
+		strcpy(missatge,"{B1}");
 	}
 }
 void selector(char msg[256]){
@@ -213,7 +213,7 @@ void selector(char msg[256]){
 			contador(msg);
 			break;
 		default:
-			missatge="{E2}"; //Error de paràmetre
+			strcpy(missatge,"{E2}");//Error de paràmetre
 	}
 }
 
