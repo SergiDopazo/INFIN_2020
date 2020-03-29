@@ -55,8 +55,8 @@ static void max();
 static void min();
 static void reset();
 static void contador();
-char* itoa(int num, char* str, int base); 
-void reverse(char str[], int length); 
+void itoa();
+void reverse();
 
 //Variables lectura
 	int estate=0; //marxa o parada
@@ -70,7 +70,7 @@ void reverse(char str[], int length);
 	float oldValue;
 	int counter=0; //contador de dades
 	
-	char missatge[256]="";
+	char missatge[256]=""; 
 
 int main(int argc, char *argv[])
 {
@@ -134,8 +134,8 @@ int main(int argc, char *argv[])
 	}
 }
 
-void selector(char msg[256]){
-	switch(msg[1]){
+void selector(char msg[256]){ //Seleccionar funció segons acció dessitjada
+	switch(msg[1]){ //Comprovar segon valor (Informació de la lletra)
 		case 'M':
 			marcha(msg);
 			break;
@@ -207,10 +207,9 @@ void oldest(char msg[256]){
 	char value[5]="";
 	char missatge1[4]="{U0";
 		
-	if (msg[0]=='{'&&msg[2]=='}'&&msg[3]==0){
+	if (msg[0]=='{'&&msg[2]=='}'&&msg[3]==0){ 
 		strcpy(missatge,missatge1);
-		printf("%s\n",missatge);
-		gcvt(oldValue,4,value);
+		gcvt(oldValue,4,value); //Convertir float a string
 		int l=strlen(value);
 		if (l<5){
 			for (int i=5-l; i>0; i--){
@@ -220,19 +219,15 @@ void oldest(char msg[256]){
 				strcat(value,temp);
 			}
 		}
-		printf("%s\n",value);
-		
 		strcat(missatge,value);
-		printf("%s\n",missatge);
-		strcat(missatge,"}");
-		printf("%s\n",missatge);
-		counter++;
+		strcat(missatge,"}"); //Concatenar missatge d'acord al protocol
+		counter++; //Suma counter per "eliminar" la mostra
 		if(counter==100){
 		counter=0;
 		}
 	}
 	else{
-		strcpy(missatge,"{U1}");
+		strcpy(missatge,"{U1}"); //Error de protocol
 	}
 }
 
@@ -241,14 +236,13 @@ void max(char msg[256]){
 	char value[5];
 	char missatge1[]="{X0";
   for (int c = 1; c < 100; c++) {
-  	if (array[c] > maxValue) {
+  	if (array[c] > maxValue) { //Buscar valor máxim
     	maxValue  = array[c];
     }
   }
 	if (msg[0]=='{'&&msg[2]=='}'&&msg[3]==0){
 		strcpy(missatge,missatge1);
-		printf("%s\n",missatge);
-		gcvt(maxValue,4,value);
+		gcvt(maxValue,4,value); //Convertir float a string
 		int l=strlen(value);
 		if (l<5){
 			for (int i=5-l; i>0; i--){
@@ -258,11 +252,8 @@ void max(char msg[256]){
 				strcat(value,temp);
 			}
 		}
-		printf("%s\n",value);
 		strcat(missatge,value);
-		printf("%s\n",missatge);
-		strcat(missatge,"}");
-		printf("%s\n",missatge);
+		strcat(missatge,"}"); //Concatenar missatge d'acord al protocol
 	}
 	else{
 		strcpy(missatge,"{X1}");
@@ -274,19 +265,18 @@ void min(char msg[256]){
 	minValue = array[0];
 	char value[5];
 	char missatge1[]="{Y0";
-	for (int c = 1; c < 100; c++) {
+	for (int c = 1; c < 100; c++) { //Buscar valor mínim
     if (array[c] < minValue) {
     	minValue  = array[c];
     }
   }
 	if (msg[0]=='{'&&msg[2]=='}'&&msg[3]==0){
 		strcpy(missatge,missatge1);
-		printf("%s\n",missatge);
 		if(minValue<1){
 			gcvt(minValue,3,value);
 		}
 		else{
-			gcvt(minValue,4,value);
+			gcvt(minValue,4,value); //Convertir float a string
 		}
 		int l=strlen(value);
 		if (l<5){
@@ -297,58 +287,77 @@ void min(char msg[256]){
 				strcat(value,temp);
 			}
 		}
-		printf("%s\n",value);
-		
 		strcat(missatge,value);
-		printf("%s\n",missatge);
-		strcat(missatge,"}");
-		printf("%s\n",missatge);
+		strcat(missatge,"}"); //Concatenar missatge d'acord al protocol
 	}
 	else{
-		strcpy(missatge,"{Y1}");
+		strcpy(missatge,"{Y1}"); //Error de protocol
 	}
 }
 
 void reset(char msg[256]){
 	if (msg[0]=='{'&&msg[2]=='}'&&msg[3]==0){
-    minValue=100000;
+    minValue=100000; //Valors per ressetejar
     maxValue=0;
-    strcpy(missatge,"{R0}");
+    strcpy(missatge,"{R0}"); //Tot OK
 	}
 	else{
-		strcpy(missatge,"{R1}");
+		strcpy(missatge,"{R1}"); //Error de protocol
 	}
 
 }
 
 void contador(char msg[256]){
-	char value[4];
-	int left=99-counter;
-	printf("%d\n",left);
-	char missatge1[]="{B0";
+	char value[5];
+	int left=(99-counter)+1; //Valors que queden per llegir
+	char missatge1[10]="";
+	if (left<100) { //Principi del missatge segons magnitud
+		if (left<10){
+			strcpy(missatge1,"{B0000");
+		}
+		strcpy(missatge1,"{B000");
+	}
+	else {
+		strcpy(missatge1,"{B00");
+	}
 	if (msg[0]=='{'&&msg[2]=='}'&&msg[3]==0){
 		strcpy(missatge,missatge1);
-		printf("%s\n",missatge);
-		itoa(left,value,10);
-		printf("%s\n",value);
-		int l=strlen(value);
-		if (l<4){
-			for (int i=4-l; i>0; i--){
-				char temp[]="";
-				strcpy(temp,value);
-				strcpy(value,"0");
-				strcat(value,temp);
-			}
-		}
-		printf("%s\n",value);
+		itoa(left,value); //Convertir de integer a string
 		strcat(missatge,value);
-		printf("%s\n",missatge);
 		strcat(missatge,"}");
-		printf("%s\n",missatge);
-
 	}
 	else{
-		strcpy(missatge,"{B1}");
+		strcpy(missatge,"{B1}"); //Error de protocol
 	}
 }
+
+/* itoa:  convert n to characters in s */
+ void itoa(int n, char s[])
+ {
+     int i, sign;
+ 
+     if ((sign = n) < 0)  /* record sign */
+         n = -n;          /* make n positive */
+     i = 0;
+     do {       /* generate digits in reverse order */
+         s[i++] = n % 10 + '0';   /* get next digit */
+     } while ((n /= 10) > 0);     /* delete it */
+     if (sign < 0)
+         s[i++] = '-';
+     s[i] = '\0';
+     reverse(s);
+ }
+ 
+ /* reverse:  reverse string s in place */
+ void reverse(char s[])
+ {
+     int i, j;
+     char c;
+ 
+     for (i = 0, j = strlen(s)-1; i<j; i++, j--) {
+         c = s[i];
+         s[i] = s[j];
+         s[j] = c;
+     }
+ }
 
