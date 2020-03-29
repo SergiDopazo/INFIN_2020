@@ -69,8 +69,8 @@ void reverse();
 	float minValue;
 	float oldValue;
 	int counter=0; //contador de dades
-	
-	char missatge[256]=""; 
+
+	char missatge[256]="";
 
 int main(int argc, char *argv[])
 {
@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
 	int			newFd;
 	int 		result;
 	char		buffer[256];
-	
+
 
 	/*Generar 100 mostres*/
 	srand((unsigned)time(NULL));
@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
 			printf("(%d) %0.1f\n",counter,array[counter]); //Imprimir mostres
 	}
 	counter = 0;
-	
+
 	/*Preparar l'adreça local*/
 	sockAddrSize=sizeof(struct sockaddr_in);
 	bzero ((char *)&serverAddr, sockAddrSize); //Posar l'estructura a zero
@@ -158,7 +158,7 @@ void selector(char msg[256]){ //Seleccionar funció segons acció dessitjada
 			strcpy(missatge,"{E2}");//Error de paràmetre
 	}
 }
-	
+
 void marcha(char msg[256]){
 
 	int msgOK=0;
@@ -206,8 +206,8 @@ void oldest(char msg[256]){
 	oldValue = array[counter];
 	char value[5]="";
 	char missatge1[4]="{U0";
-		
-	if (msg[0]=='{'&&msg[2]=='}'&&msg[3]==0){ 
+
+	if (msg[0]=='{'&&msg[2]=='}'&&msg[3]==0){
 		strcpy(missatge,missatge1);
 		gcvt(oldValue,4,value); //Convertir float a string
 		int l=strlen(value);
@@ -299,7 +299,7 @@ void reset(char msg[256]){
 	if (msg[0]=='{'&&msg[2]=='}'&&msg[3]==0){
     minValue=100000; //Valors per ressetejar
     maxValue=0;
-    strcpy(missatge,"{R0}"); //Tot OK
+    strcpy(missatge,"{R0}"); //Tot OK, valors ressetejats
 	}
 	else{
 		strcpy(missatge,"{R1}"); //Error de protocol
@@ -335,7 +335,7 @@ void contador(char msg[256]){
  void itoa(int n, char s[])
  {
      int i, sign;
- 
+
      if ((sign = n) < 0)  /* record sign */
          n = -n;          /* make n positive */
      i = 0;
@@ -347,17 +347,16 @@ void contador(char msg[256]){
      s[i] = '\0';
      reverse(s);
  }
- 
+
  /* reverse:  reverse string s in place */
  void reverse(char s[])
  {
      int i, j;
      char c;
- 
+
      for (i = 0, j = strlen(s)-1; i<j; i++, j--) {
          c = s[i];
          s[i] = s[j];
          s[j] = c;
      }
  }
-
